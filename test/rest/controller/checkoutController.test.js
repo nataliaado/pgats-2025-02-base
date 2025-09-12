@@ -6,7 +6,7 @@ const app = require("../../../rest/app");
 
 const loginUser = require("../fixture/requisicoes/login/loginUser.json");
 const checkoutService = require("../../../src/services/checkoutService");
-const respostaErro = require("../fixture/respostas/checkout/erroCartaoObrigatorio.json");
+const respostaErroCartaoObrigatorio = require("../fixture/respostas/checkout/erroProdutoNaoEncontrado.json");
 const checkoutValido = require("../fixture/requisicoes/checkout/validarCheckoutValido.json");
 const respostaEsperada = require("../fixture/respostas/checkout/tokenInvalido.json");
 
@@ -39,14 +39,14 @@ describe("REST - Checkout Controller", () => {
 
   it("Usando Mock: Validar Produto não encontrado, status 400", async () => {
     const checkoutServiceMock = sinon.stub(checkoutService, "checkout");
-    checkoutServiceMock.throws(new Error(respostaErro.error));
+    checkoutServiceMock.throws(new Error(respostaErroCartaoObrigatorio.error));
     const resposta = await request(app)
       .post("/api/checkout")
       .set("authorization", `Bearer ${token}`)
       .send(checkoutValido);
 
     expect(resposta.status).to.equal(400);
-    expect(resposta.body).to.deep.equal(respostaErro);
+    expect(resposta.body).to.deep.equal(respostaErroCartaoObrigatorio);
   });
 
   afterEach(() => {

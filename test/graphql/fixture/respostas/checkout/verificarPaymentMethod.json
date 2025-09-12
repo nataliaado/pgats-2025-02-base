@@ -1,0 +1,14 @@
+{
+  "data": {
+    "checkout": {
+      "items": [
+        {
+          "productId": 1,
+          "quantity": 1
+        }
+      ],
+      "paymentMethod": "boleto",
+      "valorFinal": 100
+    }
+  }
+}

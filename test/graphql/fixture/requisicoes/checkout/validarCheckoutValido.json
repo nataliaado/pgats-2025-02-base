@@ -1,0 +1,14 @@
+{
+  "query": "mutation Checkout($items: [CheckoutItemInput!]!, $paymentMethod: String!, $cardData: CardDataInput, $freight: Float!) {\n  checkout(items: $items, paymentMethod: $paymentMethod, cardData: $cardData, freight: $freight) {\n    items {\n      productId\n      quantity\n    }\n    paymentMethod\n    valorFinal\n  }\n}",
+  "variables": {
+    "items": [
+      {
+        "productId": 1,
+        "quantity": 1
+      }
+    ],
+    "freight": 0,
+    "paymentMethod": "boleto",
+    "cardData": null
+  }
+}
