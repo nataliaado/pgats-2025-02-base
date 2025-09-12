@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "productId": 0,
+      "quantity": 0
+    }
+  ],
+  "freight": 0,
+  "paymentMethod": "boleto",
+  "cardData": {
+    "number": "1234",
+    "name": "Produto A",
+    "expiry": "nunca",
+    "cvv": "123"
+  }
+}
