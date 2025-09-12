@@ -4,49 +4,52 @@ const { expect } = require("chai");
 
 const app = require("../../../rest/app");
 
+const loginUser = require("../fixture/requisicoes/login/loginUser.json");
 const checkoutService = require("../../../src/services/checkoutService");
+const respostaErro = require("../fixture/respostas/checkout/erroCartaoObrigatorio.json");
+const checkoutValido = require("../fixture/requisicoes/checkout/validarCheckoutValido.json");
+const respostaEsperada = require("../fixture/respostas/checkout/tokenInvalido.json");
 
-describe("Checkout Controller", () => {
-  describe("POST/ checkout", () => {
-    beforeEach(async () => {
-      const respostaLogin = await request(app).post("/api/users/login").send({
-        email: "alice@email.com",
-        password: "123456",
-      });
+describe("REST - Checkout Controller", () => {
+  beforeEach(async () => {
+    const respostaLogin = await request(app)
+      .post("/api/users/login")
+      .send(loginUser);
 
-      token = respostaLogin.body.token;
-    });
+    token = respostaLogin.body.token;
+  });
 
-    const checkoutValido = require("../fixture/requisicoes/validarCheckoutValido.json");
+  it("Quando informo dados válidos, realiza o checkout com sucesso, com status 200", async () => {
+    const resposta = await request(app)
+      .post("/api/checkout")
+      .set("authorization", `Bearer ${token}`)
+      .send(checkoutValido);
 
-    it("Quando informo dados válidos, realiza o checkout com sucesso, com status 200", async () => {
-      const resposta = await request(app)
-        .post("/api/checkout")
-        .set("authorization", `Bearer ${token}`)
-        .send(checkoutValido);
+    expect(resposta.status).to.equal(200);
+  });
 
-      expect(resposta.status).to.equal(200);
-    });
+  it("Quando realizo checkout sem o Token, recebo mensagem de erro e status 401, via HTTP", async () => {
+    const resposta = await request(app)
+      .post("/api/checkout")
+      .send(checkoutValido);
 
-    it("Usando Mock: Validar Produto não encontrado, status 400", async () => {
-      const checkoutServiceMock = sinon.stub(checkoutService, "checkout");
-      checkoutServiceMock.throws(
-        new Error("Dados do cartão obrigatórios para pagamento com cartão")
-      );
-      const resposta = await request(app)
-        .post("/api/checkout")
-        .set("authorization", `Bearer ${token}`)
-        .send(checkoutValido);
+    expect(resposta.status).to.equal(401);
+    expect(resposta.body).to.deep.equal(respostaEsperada);
+  });
 
-      expect(resposta.status).to.equal(400);
-      expect(resposta.body).to.have.property(
-        "error",
-        "Dados do cartão obrigatórios para pagamento com cartão"
-      );
-    });
+  it("Usando Mock: Validar Produto não encontrado, status 400", async () => {
+    const checkoutServiceMock = sinon.stub(checkoutService, "checkout");
+    checkoutServiceMock.throws(new Error(respostaErro.error));
+    const resposta = await request(app)
+      .post("/api/checkout")
+      .set("authorization", `Bearer ${token}`)
+      .send(checkoutValido);
 
-    afterEach(() => {
-      sinon.restore();
-    });
+    expect(resposta.status).to.equal(400);
+    expect(resposta.body).to.deep.equal(respostaErro);
+  });
+
+  afterEach(() => {
+    sinon.restore();
   });
 });
