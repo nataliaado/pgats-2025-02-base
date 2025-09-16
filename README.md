@@ -8,6 +8,9 @@ Se você é aluno da Pós-Graduação em Automação de Testes de Software (Turm
 npm install express jsonwebtoken swagger-ui-express apollo-server-express graphql
 ```
 
+## Configuração
+Antes de seguir, crie um arquivo .env na pasta raiz contendo as propriedades BASE_URL_REST e BASE_URL_GRAPHQL com a URL desses serviços.
+
 ## Exemplos de chamadas
 
 ### REST
