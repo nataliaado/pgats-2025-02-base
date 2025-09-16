@@ -6,7 +6,7 @@ const app = require("../../../rest/app");
 
 const loginUser = require("../fixture/requisicoes/login/loginUser.json");
 const checkoutService = require("../../../src/services/checkoutService");
-const respostaErroCartaoObrigatorio = require("../fixture/respostas/checkout/erroProdutoNaoEncontrado.json");
+const respostaErroCartaoObrigatorio = require("../fixture/respostas/checkout/erroCartaoObrigatorio.json");
 const checkoutValido = require("../fixture/requisicoes/checkout/validarCheckoutValido.json");
 const respostaEsperada = require("../fixture/respostas/checkout/tokenInvalido.json");
 
@@ -28,7 +28,7 @@ describe("REST - Checkout Controller", () => {
     expect(resposta.status).to.equal(200);
   });
 
-  it("Quando realizo checkout sem o Token, recebo mensagem de erro e status 401, via HTTP", async () => {
+  it("Quando realizo checkout sem o Token, recebo mensagem de erro e status 401", async () => {
     const resposta = await request(app)
       .post("/api/checkout")
       .send(checkoutValido);
