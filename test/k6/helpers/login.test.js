@@ -3,6 +3,7 @@ import { check, sleep, group } from "k6";
 import { getBaseUrl } from "./getBaseUrl.js";
 import { SharedArray } from "k6/data";
 import { randomEmail } from "./randomEmail.js";
+import faker from "k6/x/faker"
 
 const users = new SharedArray("users", function () {
   return JSON.parse(open("../data/login.test.data.json"));
@@ -24,7 +25,7 @@ export function registerUser() {
     const responseUserRegister = http.post(
       `${getBaseUrl()}/api/users/register`,
       JSON.stringify({
-        name: user.name,
+        name: faker.person.firstName(),
         email: email,
         password: user.password,
       }),

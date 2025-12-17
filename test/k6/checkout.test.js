@@ -1,31 +1,38 @@
 import http from "k6/http";
 import { check, sleep, group } from "k6";
+import { Trend } from "k6/metrics";
 import { getBaseUrl } from "./helpers/getBaseUrl.js";
 import { register, login } from "./helpers/login.test.js";
 
-export const options = {
-  vus: 1,
-  iterations: 1,
-  /* duration: "20s",
+export let options = {
   thresholds: {
-    http_req_duration: ["p(90) <= 15", "p(95) <= 20"],
-  },*/
+    http_req_duration: ["p(95)<2000"],
+  },
+  stages: [
+    { duration: "3s", target: 10 },
+    { duration: "15s", target: 10 },
+    { duration: "2s", target: 100 },
+    { duration: "3s", target: 100 },
+    { duration: "5s", target: 10 },
+    { duration: "5s", target: 0 },
+  ],
 };
 
+const checkoutTrend = new Trend("checkout_duration");
+
 export default function () {
-group("Realizar Checkout", () => {
-  const creds = register();
-  const email = creds.email;
-  const password = creds.password;
-  let token = null;
+  group("Realizar Checkout", () => {
+    const creds = register();
+    const email = creds.email;
+    const password = creds.password;
+    let token = null;
 
-  group("Login User", function () {
-    token = login(email, password);
-  });
+    group("Login User", function () {
+      token = login(email, password);
+    });
 
-  let responseCheckout = http.post(
-    `${getBaseUrl()}/api/checkout`,
-    JSON.stringify({
+    const url = `${getBaseUrl()}/api/checkout`;
+    const payload = JSON.stringify({
       items: [
         {
           productId: 1,
@@ -40,21 +47,23 @@ group("Realizar Checkout", () => {
         expiry: "string",
         cvv: "string",
       },
-    }),
-    {
+    });
+    const params = {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-    }
-  );
-
-  check(responseCheckout, {
-    "Checkout foi bem sucedido (status 200)": (res) => res.status === 200,
+    };
+    const start = Date.now();
+    const responseCheckout = http.post(url, payload, params);
+    const duration = Date.now() - start;
+    checkoutTrend.add(duration);
+    check(responseCheckout, {
+      "Checkout foi bem sucedido (status 200)": (res) => res.status === 200,
+    });
   });
-});
 
-group("Simulando o pensamento do Usuário", () => {
-  sleep(1);
-});
+  group("Simulando o pensamento do Usuário", () => {
+    sleep(1);
+  });
 }
