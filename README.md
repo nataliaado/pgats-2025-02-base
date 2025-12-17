@@ -9,10 +9,8 @@ npm install express jsonwebtoken swagger-ui-express apollo-server-express graphq
 ```
 
 ## Conceitos K6 aplicados no projeto
-#### Thresholds
-  Arquivos: login.test.js, checkout.test.js
-  Demonstração de uso:
-  login.test.js 
+### Thresholds
+  Demonstração de uso: login.test.js 
   ```export let options = {
   vus: 7,
   iterations: 7,
@@ -22,7 +20,7 @@ npm install express jsonwebtoken swagger-ui-express apollo-server-express graphq
 };
 ```
 
-checkout.test.js
+Demonstração de uso: checkout.test.js
  ```export let options = {
   thresholds: {
     http_req_duration: ["p(95)<2000"],
