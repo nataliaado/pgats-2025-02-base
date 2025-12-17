@@ -9,7 +9,7 @@ npm install express jsonwebtoken swagger-ui-express apollo-server-express graphq
 ```
 
 ## Conceitos K6 aplicados no projeto
-* Thresholds
+#### Thresholds
   Arquivos: login.test.js, checkout.test.js
   Demonstração de uso:
   login.test.js 
@@ -19,7 +19,8 @@ npm install express jsonwebtoken swagger-ui-express apollo-server-express graphq
   thresholds: {
     http_req_duration: ["p(95)<2000"],
   },
-};```
+};
+```
 
 checkout.test.js
  ```export let options = {
@@ -29,7 +30,8 @@ checkout.test.js
   stages: [
    ...
   ],
-};```
+};
+```
 
 ## Configuração
 Antes de seguir, crie um arquivo .env na pasta raiz contendo as propriedades BASE_URL_REST e BASE_URL_GRAPHQL com a URL desses serviços.
