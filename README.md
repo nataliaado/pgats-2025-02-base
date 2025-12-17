@@ -8,6 +8,29 @@ Se você é aluno da Pós-Graduação em Automação de Testes de Software (Turm
 npm install express jsonwebtoken swagger-ui-express apollo-server-express graphql
 ```
 
+## Conceitos K6 aplicados no projeto
+* Thresholds
+  Arquivos: login.test.js, checkout.test.js
+  Demonstração de uso:
+  login.test.js 
+  ```export let options = {
+  vus: 7,
+  iterations: 7,
+  thresholds: {
+    http_req_duration: ["p(95)<2000"],
+  },
+};```
+
+checkout.test.js
+ ```export let options = {
+  thresholds: {
+    http_req_duration: ["p(95)<2000"],
+  },
+  stages: [
+   ...
+  ],
+};```
+
 ## Configuração
 Antes de seguir, crie um arquivo .env na pasta raiz contendo as propriedades BASE_URL_REST e BASE_URL_GRAPHQL com a URL desses serviços.
 
