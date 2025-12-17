@@ -31,6 +31,17 @@ Demonstração de uso: checkout.test.js
 };
 ```
 
+### Checks
+### Helpers
+### Trends
+### Faker
+### Variável de ambiente
+### Stages
+### Reaproveitamento de Resposta
+### Uso de Token de Autenticação
+### Data-Driven Testing
+### Groups
+
 ## Configuração
 Antes de seguir, crie um arquivo .env na pasta raiz contendo as propriedades BASE_URL_REST e BASE_URL_GRAPHQL com a URL desses serviços.
 
