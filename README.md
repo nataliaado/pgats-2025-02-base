@@ -32,6 +32,24 @@ Demonstração de uso: checkout.test.js
 ```
 
 ### Checks
+Demonstração de uso: login.test.js 
+```check(responseUserRegister, {
+      "Registro foi bem sucedido (status 201)": (res) => res.status === 201,
+    });
+```
+``` check(responseUserLogin, {
+      "Login foi bem sucedido (status 200)": (res) => res.status === 200,
+    });
+```
+```check(token, {
+    "token obtido": (t) => !!t,
+  });
+```
+
+Demonstração de uso: checkout.test.js
+```
+
+
 ### Helpers
 ### Trends
 ### Faker
