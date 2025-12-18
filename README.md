@@ -1,4 +1,4 @@
-# API Checkout Rest, GraphQL e K6
+# API Checkout - Testes em Rest, GraphQL e K6
 
 ## Conceitos K6 aplicados no projeto
 ### Thresholds
