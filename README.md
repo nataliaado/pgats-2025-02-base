@@ -1,4 +1,4 @@
-# API Checkout Rest e GraphQL
+# API Checkout Rest, GraphQL e K6
 
 ## Conceitos K6 aplicados no projeto
 ### Thresholds
@@ -29,7 +29,7 @@ export let options = {
 
 ### Checks
 Explicação:
-  Utilizo de 'checks' para verificar/ fazer a comparação da resposta recebida da API com a resposta esperada. A comparação é feita com 'checks'.
+  Utilizo de 'checks' para verificar/ fazer a comparação da resposta recebida da API com a resposta esperada. A verificação é feita com 'checks'.
 
 Demonstração de uso: login.test.js 
 ```
@@ -142,8 +142,6 @@ Utilização no Còdigo:
   const url = `${getBaseUrl()}/api/checkout`;
 ```
 
-
-
 ### Stages
 Explicação:
   Utilizo de 'Stages' para configurar a carga de usuários de maneira progressiva durante a execução do teste.
@@ -167,7 +165,7 @@ Utilização no Còdigo:
 
 ### Reaproveitamento de Resposta
 Explicação:
- Reaproveito a resposta quando capturo o token de uma resposta HTTP. Também reaproveito dados do registro para o login.
+ Reaproveito a resposta quando capturo o token de uma resposta HTTP. Também reaproveito dados do registro do usuário para o login.
 
 Demonstração de uso: login.test.js
 
@@ -190,7 +188,8 @@ export default function () {
 
 ### Uso de Token de Autenticação
 Explicação:
-  Utilizo da classe helper (login.test.js), para capturar o token e reaproveito essa funcionalidade numa chamada dentro da classe checkout.test.js, quando preciso do token no payload do checkout para autorizar o checkout do usuário.
+  Utilizo da classe (login.test.js), para capturar o token.
+  Reaproveito essa funcionalidade numa chamada dentro da classe checkout.test.js, quando preciso do token no payload do checkout, para autorizar o checkout do usuário.
 
 Demonstração de uso: checkout.test.js
 
@@ -276,6 +275,7 @@ Utilização no Còdigo:
       token = login(email, password);
     });
 ```
+
 
 ## Instalação
 
