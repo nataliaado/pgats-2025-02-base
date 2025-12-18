@@ -1,12 +1,5 @@
 # API Checkout Rest e GraphQL
 
-
-## Instalação
-
-```bash
-npm install express jsonwebtoken swagger-ui-express apollo-server-express graphql
-```
-
 ## Conceitos K6 aplicados no projeto
 ### Thresholds
 Explicação:
@@ -225,11 +218,70 @@ Utilização no Còdigo:
 ```
 ### Data-Driven Testing
 Explicação:
-  
+  Faço a utilização de um json (login.test.data.json) com dados de alguns usuários.
+  Com a importação desse json para dentro da classe login.test.js, é possível reaproveitar esses dados para realizar o registro do usuário, por exemplo.
+
+Demonstração de uso: login.test.js
+
+Importação:
+```
+const users = new SharedArray("users", function () {
+  return JSON.parse(open("../data/login.test.data.json"));
+});
+```
+Declaração:
+```
+const user = users[(__VU - 1) % users.length];
+```
+
+Utilização no Còdigo:
+```
+const responseUserRegister = http.post(
+      `${getBaseUrl()}/api/users/register`,
+      JSON.stringify({
+       ...
+        password: user.password,
+      }))
+```
 
 ### Groups
+Explicação:
+  'Groups' é utilizado nas classes de teste K6 para organizar o código.
 
+Demonstração de uso: login.test.js
 
+Importação:
+```
+import { check, sleep, group } from "k6";
+```
+
+Utilização no Còdigo:
+```
+group("Registrar Usuário", () => {
+    const responseUserRegister = http.post(
+    ...
+    )
+  });
+```
+Demonstração de uso: checkout.test.js
+
+Importação:
+```
+import { check, sleep, group } from "k6";
+```
+
+Utilização no Còdigo:
+```
+  group("Login User", function () {
+      token = login(email, password);
+    });
+```
+
+## Instalação
+
+```bash
+npm install express jsonwebtoken swagger-ui-express apollo-server-express graphql
+```
 
 ## Configuração
 Antes de seguir, crie um arquivo .env na pasta raiz contendo as propriedades BASE_URL_REST e BASE_URL_GRAPHQL com a URL desses serviços.
