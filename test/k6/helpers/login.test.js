@@ -10,8 +10,8 @@ const users = new SharedArray("users", function () {
 });
 
 export let options = {
-  vus: 7,
-  iterations: 7,
+  vus: 100,
+  iterations: 1000,
   thresholds: {
     http_req_duration: ["p(95)<2000"],
   },
