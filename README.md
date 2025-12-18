@@ -1,6 +1,5 @@
 # API Checkout Rest e GraphQL
 
-Se você é aluno da Pós-Graduação em Automação de Testes de Software (Turma 2), faça um fork desse repositório e boa sorte em seu trabalho de conclusão da disciplina.
 
 ## Instalação
 
@@ -10,11 +9,13 @@ npm install express jsonwebtoken swagger-ui-express apollo-server-express graphq
 
 ## Conceitos K6 aplicados no projeto
 ### Thresholds
-  Demonstração de uso: login.test.js 
+Explicação:
+  Utilizo de métrica de desempenho 'Thresholds' para verificar os parâmetros de tempo de resposta da API sendo testada.
+
+Demonstração de uso: login.test.js 
   ```
 export let options = {
-  vus: 7,
-  iterations: 7,
+ ...
   thresholds: {
     http_req_duration: ["p(95)<2000"],
   },
@@ -34,6 +35,9 @@ export let options = {
 ```
 
 ### Checks
+Explicação:
+  Utilizo de 'checks' para verificar/ fazer a comparação da resposta recebida da API com a resposta esperada. A comparação é feita com 'checks'.
+
 Demonstração de uso: login.test.js 
 ```
 check(responseUserRegister, {
@@ -53,17 +57,179 @@ check(token, {
 
 Demonstração de uso: checkout.test.js
 ```
-
+  check(responseCheckout, {
+      "Checkout foi bem sucedido (status 200)": (res) => res.status === 200,
+    });
+```
 
 ### Helpers
+Explicação:
+  Faço o uso de 3 classes (getBaseURL.js, logintest.js e randomEmail.js), localizadas dentro da pasta k6/helpers. Tem o propósito de adicionar funcionalidades extras a classes que importem suas funcionalidades.
+
+Funcionalidades:
+  Geração de e-mail randômico, reutilização da URL de execução da API, Registro e Obtenção de Token de usuários.
+
+Demonstração de uso: randomEmail.js
+```
+export function randomEmail() {
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 100000);
+    return `user_${timestamp}_${random}@test.com`;
+}
+```
+
 ### Trends
+Explicação:
+  Utilizo 'Trends' para análise de tendências e acompanhamento do histórico de execução da API sendo testada, em vez de focar apenas em uma execução isolada.
+
+Demonstração de uso: checkout.test.js
+
+Importação:
+```
+  import { Trend } from "k6/metrics";
+```
+
+Declaração:
+```
+  const checkoutTrend = new Trend("checkout_duration");
+```
+
+Utilização no Còdigo:
+```
+  const start = Date.now();
+  const responseCheckout = http.post(url, payload, params);
+  const duration = Date.now() - start;
+  checkoutTrend.add(duration);
+```
+
 ### Faker
+Explicação:
+  Utilizo da biblioteca 'faker' para gerar dados fictícios de usuário.
+
+Demonstração de uso: login.test.js
+
+Importação:
+```
+  import faker from "k6/x/faker"
+```
+
+Utilização no Còdigo:
+```
+   JSON.stringify({
+        name: faker.person.firstName(),
+        ...
+      })
+```
+
 ### Variável de ambiente
+Explicação:
+  Utilizo da função getBaseUrl() retornando uma variável de ambiente de onde a API está sendo executada.
+  Uso desse valor dinamicamente nos testes em que preciso montar a requisição.
+
+Demonstração de uso: getBaseUrl.js
+
+Utilização no Còdigo:
+```
+export function getBaseUrl() {
+    return __ENV.BASE_URL || 'http://localhost:3000';
+}
+```
+
+Demonstração de uso: login.test.js
+```
+const responseUserRegister = http.post(
+      `${getBaseUrl()}/api/users/register`,
+      ...)
+```
+
+Demonstração de uso: checkout.test.js
+
+Utilização no Còdigo:
+```
+  const url = `${getBaseUrl()}/api/checkout`;
+```
+
+
+
 ### Stages
+Explicação:
+  Utilizo de 'Stages' para configurar a carga de usuários de maneira progressiva durante a execução do teste.
+
+Demonstração de uso: checkout.test.js
+
+Utilização no Còdigo:
+```
+  export let options = {
+  ...
+  },
+  stages: [
+    { duration: "3s", target: 10 },
+    { duration: "15s", target: 10 },
+    { duration: "2s", target: 100 },
+    { duration: "3s", target: 100 },
+    { duration: "5s", target: 10 },
+    { duration: "5s", target: 0 },
+  ]
+```
+
 ### Reaproveitamento de Resposta
+Explicação:
+ Reaproveito a resposta quando capturo o token de uma resposta HTTP. Também reaproveito dados do registro para o login.
+
+Demonstração de uso: login.test.js
+
+```
+token = responseUserLogin.json("token"); 
+
+return token;
+```
+
+```
+export const register = registerUser;
+export const login = loginUser;
+
+export default function () {
+  const creds = register(); 
+  const token = login(creds.email, creds.password); 
+  ...
+}
+```
+
 ### Uso de Token de Autenticação
+Explicação:
+  Utilizo da classe helper (login.test.js), para capturar o token e reaproveito essa funcionalidade numa chamada dentro da classe checkout.test.js, quando preciso do token no payload do checkout para autorizar o checkout do usuário.
+
+Demonstração de uso: checkout.test.js
+
+Importação:
+```
+import { register, login } from "./helpers/login.test.js";
+```
+
+Utilização no Còdigo:
+```
+ group("Login User", function () {
+      token = login(email, password);
+    });
+
+ const payload = JSON.stringify({
+      items: [
+       ...]
+      },
+    );
+    const params = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }}   
+```
 ### Data-Driven Testing
+Explicação:
+  
+
 ### Groups
+
+
 
 ## Configuração
 Antes de seguir, crie um arquivo .env na pasta raiz contendo as propriedades BASE_URL_REST e BASE_URL_GRAPHQL com a URL desses serviços.
